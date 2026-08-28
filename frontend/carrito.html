@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito — Viñeta Boutique</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="brand">🍷 Viñeta Boutique</a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Catálogo</a>
+      <div id="nav-auth"></div>
+      <a href="carrito.html" class="cart-link">🛒<span id="cart-count">0</span></a>
+    </div>
+  </nav>
+
+  <main class="cart-page">
+    <h1 class="section-title" style="margin-bottom:32px;">Tu carrito</h1>
+    <div id="cart-items"></div>
+
+    <div class="cart-summary" id="cart-summary" style="display:none;">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span id="cart-total">$0</span>
+      </div>
+      <button class="btn btn-primary btn-block" style="padding:16px;font-size:16px;" onclick="checkout()">
+        Proceder al pago con Mercado Pago
+      </button>
+      <p style="text-align:center;color:var(--color-gray);font-size:13px;margin-top:12px;">
+        Serás redirigido a Mercado Pago de forma segura 🔒
+      </p>
+    </div>
+
+    <div id="cart-empty" style="text-align:center;padding:60px 20px;display:none;">
+      <div style="font-size:64px;margin-bottom:16px;">🍷</div>
+      <h2 style="font-family:'Playfair Display';font-size:28px;margin-bottom:8px;">Tu carrito está vacío</h2>
+      <p style="color:var(--color-gray);margin-bottom:24px;">Explorá nuestro catálogo y descubrí vinos únicos.</p>
+      <a href="index.html" class="btn btn-primary">Ver catálogo</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 Viñeta Boutique</p>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    function renderCart() {
+      const cart = getCart();
+      const itemsContainer = document.getElementById('cart-items');
+      const summary = document.getElementById('cart-summary');
+      const empty = document.getElementById('cart-empty');
+
+      if (cart.length === 0) {
+        itemsContainer.innerHTML = '';
+        summary.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      summary.style.display = 'block';
+
+      itemsContainer.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-qty">Cantidad: ${item.quantity}</div>
+            <div class="cart-item-price">$${(item.price * item.quantity).toLocaleString()}</div>
+          </div>
+          <button class="cart-remove" onclick="removeFromCart(${item.id})">Eliminar</button>
+        </div>
+      `).join('');
+
+      document.getElementById('cart-total').textContent = '$' + getCartTotal().toLocaleString();
+      updateCartCount();
+    }
+
+    async function checkout() {
+      if (!isLoggedIn()) {
+        showToast('Iniciá sesión para continuar con la compra');
+        setTimeout(() => location.href = 'login.html', 1500);
+        return;
+      }
+
+      const cart = getCart();
+      if (cart.length === 0) return;
+
+      try {
+        const items = cart.map(i => ({
+          title: i.name,
+          unit_price: i.price,
+          quantity: i.quantity,
+          productId: i.id
+        }));
+
+        const data = await api('/payment/create', {
+          method: 'POST',
+          body: JSON.stringify({ items })
+        });
+
+        // Limpiar carrito y redirigir a Mercado Pago
+        localStorage.removeItem(CART_KEY);
+        updateCartCount();
+        window.location.href = data.init_point;
+      } catch (err) {
+        showToast(err.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>
