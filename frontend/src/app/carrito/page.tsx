@@ -5,7 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { obtenerCarrito, actualizarCantidadCarrito, eliminarDelCarrito } from "@/lib/api";
+import {
+  obtenerCarrito,
+  actualizarCantidadCarrito,
+  eliminarDelCarrito,
+  crearPreferenciaCheckout,
+} from "@/lib/api";
 import { Button } from "@/components/ui/button";
 
 type ItemCarrito = {
@@ -36,6 +41,7 @@ export default function CarritoPage() {
   const [total, setTotal] = useState(0);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [procesandoPago, setProcesandoPago] = useState(false);
 
   useEffect(() => {
     if (cargandoAuth) return;
@@ -73,6 +79,19 @@ export default function CarritoPage() {
     if (!token) return;
     await eliminarDelCarrito(token, productoId);
     cargarCarrito();
+  }
+
+  async function irAPagar() {
+    if (!token) return;
+    setError("");
+    setProcesandoPago(true);
+    try {
+      const { initPoint } = await crearPreferenciaCheckout(token);
+      window.location.href = initPoint;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo iniciar el pago");
+      setProcesandoPago(false);
+    }
   }
 
   if (cargandoAuth || cargando) {
@@ -145,6 +164,10 @@ export default function CarritoPage() {
             <span className="text-lg text-foreground">Total</span>
             <span className="font-serif text-2xl text-gold">{formatearPrecio(total)}</span>
           </div>
+
+          <Button className="w-full max-w-2xl" onClick={irAPagar} disabled={procesandoPago}>
+            {procesandoPago ? "Redirigiendo a Mercado Pago..." : "Finalizar compra"}
+          </Button>
         </div>
       )}
     </div>

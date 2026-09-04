@@ -101,3 +101,22 @@ export async function eliminarDelCarrito(token: string, productoId: number) {
   if (!res.ok) throw new Error("No se pudo eliminar el producto del carrito");
   avisarCarritoActualizado();
 }
+
+export async function crearPreferenciaCheckout(token: string) {
+  const res = await fetch(`${API_URL}/checkout/crear-preferencia`, {
+    method: "POST",
+    headers: headersAuth(token),
+  });
+  const datos = await pedidoJson(res);
+  avisarCarritoActualizado();
+  return datos;
+}
+
+export async function confirmarPagoCheckout(token: string, paymentId: string) {
+  const res = await fetch(`${API_URL}/checkout/confirmar`, {
+    method: "POST",
+    headers: headersAuth(token),
+    body: JSON.stringify({ paymentId }),
+  });
+  return pedidoJson(res);
+}
