@@ -2,6 +2,7 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
+const productRoutes = require("./routes/products");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/productos", productRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
