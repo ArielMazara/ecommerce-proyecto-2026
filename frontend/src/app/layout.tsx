@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Sacramento } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -16,6 +16,12 @@ const playfair = Playfair_Display({
   style: ["normal", "italic"],
 });
 
+const sacramento = Sacramento({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: "Altos del Uco — Vinos de bodegas boutique",
   description: "Vinos de bodegas boutique del Valle de Uco, Mendoza.",
@@ -28,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${sacramento.variable} antialiased`}>
         <AuthProvider>
           <Header />
           {children}
