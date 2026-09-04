@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Sacramento } from "next/font/google";
+import { Inter, Playfair_Display, Parisienne } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
   style: ["normal", "italic"],
 });
 
-const sacramento = Sacramento({
+const parisienne = Parisienne({
   variable: "--font-script",
   subsets: ["latin"],
   weight: "400",
@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} ${sacramento.variable} antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${parisienne.variable} antialiased`}>
         <AuthProvider>
           <Header />
           {children}
