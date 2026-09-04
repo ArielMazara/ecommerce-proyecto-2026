@@ -28,9 +28,12 @@ export function Header() {
   }, [token]);
 
   return (
-    <header className="flex items-center justify-between px-8 py-4 sm:px-16 border-b border-border/60">
-      <Link href="/" className="font-serif text-xl text-foreground">
-        Altos del Uco
+    <header className="sticky top-0 z-30 flex items-center justify-between px-8 py-4 sm:px-16 border-b border-border/60 bg-background/80 backdrop-blur-md">
+      <Link href="/" className="flex items-center gap-2.5">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-gold/40 font-serif text-sm text-gold">
+          AU
+        </span>
+        <span className="font-serif text-lg tracking-wide text-foreground">Altos del Uco</span>
       </Link>
 
       <div className="flex items-center gap-6 text-sm">
@@ -43,7 +46,9 @@ export function Header() {
             <Link href="/pedidos" className="text-muted-foreground hover:text-gold transition-colors">
               Mis pedidos
             </Link>
-            <span className="text-muted-foreground">Hola, {usuario.nombre.split(" ")[0]}</span>
+            <span className="hidden sm:inline text-muted-foreground">
+              Hola, {usuario.nombre.split(" ")[0]}
+            </span>
             <Button variant="ghost" size="sm" onClick={logout}>
               Cerrar sesión
             </Button>
