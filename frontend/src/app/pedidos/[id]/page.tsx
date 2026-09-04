@@ -1,0 +1,126 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
+import { obtenerPedido } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
+import { ESTADOS_PEDIDO } from "@/lib/estados-pedido";
+
+type PedidoDetalle = {
+  id: number;
+  fecha: string;
+  estado: keyof typeof ESTADOS_PEDIDO;
+  total: string;
+  items: {
+    id: number;
+    cantidad: number;
+    precioUnitario: string;
+    producto: { id: number; nombre: string; bodega: string; imagenUrl: string | null };
+  }[];
+};
+
+function formatearPrecio(precio: number) {
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    maximumFractionDigits: 0,
+  }).format(precio);
+}
+
+function formatearFecha(fecha: string) {
+  return new Intl.DateTimeFormat("es-AR", { dateStyle: "long", timeStyle: "short" }).format(
+    new Date(fecha)
+  );
+}
+
+export default function DetallePedidoPage() {
+  const { id } = useParams<{ id: string }>();
+  const { usuario, token, cargando: cargandoAuth } = useAuth();
+  const router = useRouter();
+  const [pedido, setPedido] = useState<PedidoDetalle | null>(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (cargandoAuth) return;
+    if (!usuario) {
+      router.push("/login");
+      return;
+    }
+    if (!token) return;
+    obtenerPedido(token, id)
+      .then(setPedido)
+      .catch((err) => setError(err instanceof Error ? err.message : "No se pudo cargar el pedido"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cargandoAuth, usuario, id]);
+
+  if (cargandoAuth || (!pedido && !error)) {
+    return <p className="px-8 py-12 sm:px-16 text-muted-foreground">Cargando pedido...</p>;
+  }
+
+  if (error || !pedido) {
+    return (
+      <div className="px-8 py-12 sm:px-16">
+        <p className="text-destructive mb-4">{error}</p>
+        <Link href="/pedidos" className="text-gold hover:underline">
+          Volver a mis pedidos
+        </Link>
+      </div>
+    );
+  }
+
+  const estado = ESTADOS_PEDIDO[pedido.estado];
+
+  return (
+    <div className="min-h-screen px-8 py-12 sm:px-16">
+      <Link href="/pedidos" className="text-sm text-muted-foreground hover:text-gold transition-colors">
+        ← Volver a mis pedidos
+      </Link>
+
+      <div className="mt-8 mb-8 flex items-center justify-between max-w-2xl">
+        <div>
+          <h1 className="font-serif text-3xl text-foreground">Pedido #{pedido.id}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{formatearFecha(pedido.fecha)}</p>
+        </div>
+        <Badge variant="outline" className={estado.clase}>
+          {estado.etiqueta}
+        </Badge>
+      </div>
+
+      <div className="space-y-4 max-w-2xl">
+        {pedido.items.map((item) => (
+          <div key={item.id} className="flex items-center gap-4 border border-border/60 rounded-lg p-4">
+            <div className="relative w-14 h-24 shrink-0 overflow-hidden rounded">
+              <Image
+                src={item.producto.imagenUrl || "/productos/placeholder.svg"}
+                alt={item.producto.nombre}
+                fill
+                className="object-cover"
+                sizes="56px"
+              />
+            </div>
+
+            <div className="flex-1">
+              <h2 className="font-serif text-lg text-foreground">{item.producto.nombre}</h2>
+              <p className="text-sm text-muted-foreground">{item.producto.bodega}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {item.cantidad} × {formatearPrecio(Number(item.precioUnitario))}
+              </p>
+            </div>
+
+            <span className="text-gold">
+              {formatearPrecio(item.cantidad * Number(item.precioUnitario))}
+            </span>
+          </div>
+        ))}
+
+        <div className="flex items-center justify-between pt-6 border-t border-border/60">
+          <span className="text-lg text-foreground">Total</span>
+          <span className="font-serif text-2xl text-gold">{formatearPrecio(Number(pedido.total))}</span>
+        </div>
+      </div>
+    </div>
+  );
+}

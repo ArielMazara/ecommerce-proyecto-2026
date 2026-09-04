@@ -27,7 +27,7 @@ export async function obtenerProducto(id: string) {
   return res.json();
 }
 
-async function pedidoJson(res: Response) {
+async function procesarRespuesta(res: Response) {
   const datos = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(datos.error || "Ocurrió un error");
   return datos;
@@ -44,7 +44,7 @@ export async function registrarUsuario(datos: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos),
   });
-  return pedidoJson(res);
+  return procesarRespuesta(res);
 }
 
 export async function iniciarSesion(datos: { email: string; contrasena: string }) {
@@ -53,7 +53,7 @@ export async function iniciarSesion(datos: { email: string; contrasena: string }
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos),
   });
-  return pedidoJson(res);
+  return procesarRespuesta(res);
 }
 
 function headersAuth(token: string) {
@@ -68,7 +68,7 @@ function avisarCarritoActualizado() {
 
 export async function obtenerCarrito(token: string) {
   const res = await fetch(`${API_URL}/carrito`, { headers: headersAuth(token) });
-  return pedidoJson(res);
+  return procesarRespuesta(res);
 }
 
 export async function agregarAlCarrito(token: string, productoId: number, cantidad = 1) {
@@ -77,7 +77,7 @@ export async function agregarAlCarrito(token: string, productoId: number, cantid
     headers: headersAuth(token),
     body: JSON.stringify({ productoId, cantidad }),
   });
-  const datos = await pedidoJson(res);
+  const datos = await procesarRespuesta(res);
   avisarCarritoActualizado();
   return datos;
 }
@@ -88,7 +88,7 @@ export async function actualizarCantidadCarrito(token: string, productoId: numbe
     headers: headersAuth(token),
     body: JSON.stringify({ cantidad }),
   });
-  const datos = await pedidoJson(res);
+  const datos = await procesarRespuesta(res);
   avisarCarritoActualizado();
   return datos;
 }
@@ -107,7 +107,7 @@ export async function crearPreferenciaCheckout(token: string) {
     method: "POST",
     headers: headersAuth(token),
   });
-  const datos = await pedidoJson(res);
+  const datos = await procesarRespuesta(res);
   avisarCarritoActualizado();
   return datos;
 }
@@ -118,5 +118,15 @@ export async function confirmarPagoCheckout(token: string, paymentId: string) {
     headers: headersAuth(token),
     body: JSON.stringify({ paymentId }),
   });
-  return pedidoJson(res);
+  return procesarRespuesta(res);
+}
+
+export async function obtenerPedidos(token: string) {
+  const res = await fetch(`${API_URL}/pedidos`, { headers: headersAuth(token) });
+  return procesarRespuesta(res);
+}
+
+export async function obtenerPedido(token: string, id: string) {
+  const res = await fetch(`${API_URL}/pedidos/${id}`, { headers: headersAuth(token) });
+  return procesarRespuesta(res);
 }

@@ -40,6 +40,9 @@ export function Header() {
 
         {usuario ? (
           <>
+            <Link href="/pedidos" className="text-muted-foreground hover:text-gold transition-colors">
+              Mis pedidos
+            </Link>
             <span className="text-muted-foreground">Hola, {usuario.nombre.split(" ")[0]}</span>
             <Button variant="ghost" size="sm" onClick={logout}>
               Cerrar sesión
