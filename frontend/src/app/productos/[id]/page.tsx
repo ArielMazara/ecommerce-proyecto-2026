@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { obtenerProducto } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
+import { AgregarCarritoButton } from "@/components/agregar-carrito-button";
 import type { Producto } from "@/types/producto";
 
 function formatearPrecio(precio: string) {
@@ -61,6 +62,10 @@ export default async function FichaProducto({
           <p className="font-serif text-3xl text-gold mb-6">
             {formatearPrecio(producto.precio)}
           </p>
+
+          <div className="mb-6">
+            <AgregarCarritoButton productoId={producto.id} stock={producto.stock} />
+          </div>
 
           {producto.descripcion && (
             <p className="text-foreground/90 leading-relaxed mb-8">{producto.descripcion}</p>

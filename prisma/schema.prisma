@@ -28,7 +28,8 @@ model Usuario {
   rol             Rol      @default(CLIENTE)
   createdAt       DateTime @default(now()) @map("created_at")
 
-  pedidos Pedido[]
+  pedidos      Pedido[]
+  carritoItems CarritoItem[]
 
   @@map("usuarios")
 }
@@ -48,9 +49,24 @@ model Producto {
   maridaje    String?
   createdAt   DateTime @default(now()) @map("created_at")
 
-  pedidoItems PedidoItem[]
+  pedidoItems  PedidoItem[]
+  carritoItems CarritoItem[]
 
   @@map("productos")
+}
+
+model CarritoItem {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @map("usuario_id")
+  productoId Int      @map("producto_id")
+  cantidad   Int      @default(1)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  usuario  Usuario  @relation(fields: [usuarioId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+
+  @@unique([usuarioId, productoId])
+  @@map("carrito_items")
 }
 
 model Pedido {
