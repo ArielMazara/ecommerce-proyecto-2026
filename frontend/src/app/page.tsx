@@ -1,38 +1,43 @@
+import Link from "next/link";
 import { Catalogo } from "@/components/catalogo";
 import { Divider } from "@/components/divider";
+import { BottleHero } from "@/components/bottle-hero";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <section
-        className="relative overflow-hidden px-8 py-24 sm:px-16 sm:py-32 text-center"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in oklch, var(--primary) 35%, transparent), transparent), repeating-linear-gradient(115deg, transparent, transparent 42px, color-mix(in oklch, var(--gold) 5%, transparent) 42px, color-mix(in oklch, var(--gold) 5%, transparent) 43px)",
-        }}
-      >
-        <p className="text-gold uppercase tracking-[0.35em] text-xs mb-6">
-          Valle de Uco, Mendoza
+      <section className="text-center px-8 pt-20 pb-8 sm:pt-28">
+        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-5">
+          Valle de Uco · Mendoza
         </p>
-        <h1 className="font-serif text-5xl sm:text-7xl text-foreground leading-tight text-balance">
-          Vinos de altura,
-          <br />
-          <span className="italic text-gold">con carácter de terroir</span>
+        <h1 className="font-serif text-5xl sm:text-7xl text-foreground leading-[1.05] text-balance">
+          Vinos de <span className="text-gold">altura</span>.
         </h1>
-        <p className="text-muted-foreground max-w-xl mx-auto mt-6 text-balance">
-          Una selección curada de bodegas boutique del Valle de Uco — pequeñas
-          producciones, identidad de altura y el sello de cada terroir.
+        <p className="text-muted-foreground text-lg max-w-md mx-auto mt-5 text-balance">
+          Bodegas boutique del Valle de Uco, seleccionadas por su carácter de terroir.
         </p>
 
-        <a
-          href="#catalogo"
-          className="inline-block mt-10 border border-gold/50 text-gold px-8 py-3 text-sm uppercase tracking-widest hover:bg-gold hover:text-background transition-colors"
-        >
-          Ver la colección
-        </a>
+        <div className="flex justify-center">
+          <BottleHero className="h-[52vh] max-h-[560px] w-auto mt-4 sm:mt-8" />
+        </div>
+
+        <div className="flex items-center justify-center gap-8 -mt-2">
+          <a
+            href="#catalogo"
+            className="rounded-full bg-primary text-primary-foreground px-7 py-3 text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Ver catálogo
+          </a>
+          <Link
+            href="/registro"
+            className="text-sm text-foreground/80 hover:text-gold transition-colors"
+          >
+            Crear cuenta →
+          </Link>
+        </div>
       </section>
 
-      <main id="catalogo" className="px-8 py-20 sm:px-16 scroll-mt-16">
+      <main id="catalogo" className="px-8 py-24 sm:px-16 scroll-mt-16">
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl text-foreground mb-4">Nuestra selección</h2>
           <Divider />

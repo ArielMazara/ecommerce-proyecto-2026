@@ -13,6 +13,7 @@ const inter = Inter({
 const playfair = Playfair_Display({
   variable: "--font-serif",
   subsets: ["latin"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
