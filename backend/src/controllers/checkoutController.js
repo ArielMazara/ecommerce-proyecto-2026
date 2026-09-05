@@ -2,6 +2,9 @@ const prisma = require("../lib/prisma");
 const { preferenceClient, paymentClient } = require("../lib/mercadopago");
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+// Mercado Pago rechaza auto_return si las back_urls no son un dominio público
+// (falla con "back_url.success must be defined" cuando apuntan a localhost).
+const ES_URL_PUBLICA = !FRONTEND_URL.includes("localhost");
 
 async function crearPreferencia(req, res) {
   const itemsCarrito = await prisma.carritoItem.findMany({
@@ -59,7 +62,7 @@ async function crearPreferencia(req, res) {
           failure: `${FRONTEND_URL}/checkout/resultado`,
           pending: `${FRONTEND_URL}/checkout/resultado`,
         },
-        auto_return: "approved",
+        ...(ES_URL_PUBLICA ? { auto_return: "approved" } : {}),
         external_reference: String(pedido.id),
         notification_url: process.env.BACKEND_URL
           ? `${process.env.BACKEND_URL}/api/checkout/webhook`
