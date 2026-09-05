@@ -12,7 +12,7 @@ const vinos = [
     descripcion: "Malbec de altura con crianza en roble francés, exponente de la frescura de Gualtallary.",
     notasCata: "Frutos negros maduros, violetas, especias dulces y un final mineral persistente.",
     maridaje: "Carnes rojas a la parrilla, cordero patagónico y quesos duros.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-tinta.jpg",
   },
   {
     nombre: "Trece Hileras",
@@ -25,7 +25,7 @@ const vinos = [
     descripcion: "Cabernet Franc de parcela única, elegante y con marcada identidad de altura.",
     notasCata: "Pimiento asado, grafito, frutos rojos frescos y taninos sedosos.",
     maridaje: "Pastas rellenas, vegetales asados y quesos de cabra.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-tinta.jpg",
   },
   {
     nombre: "Última Piedra",
@@ -38,7 +38,7 @@ const vinos = [
     descripcion: "Malbec de guarda con dos años de crianza, complejo y estructurado.",
     notasCata: "Ciruela negra, cacao, tabaco y notas balsámicas de larga persistencia.",
     maridaje: "Asado de tira, guisos de carne y chocolate amargo.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-tinta.jpg",
   },
   {
     nombre: "Alma de Uco",
@@ -51,7 +51,7 @@ const vinos = [
     descripcion: "Chardonnay fermentado en barrica, fresco y con gran mineralidad de altura.",
     notasCata: "Cítricos, manzana verde, notas tostadas sutiles y final salino.",
     maridaje: "Pescados de mar, mariscos y quesos frescos.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-blanca-1.jpg",
   },
   {
     nombre: "Sendero del Cóndor",
@@ -64,7 +64,7 @@ const vinos = [
     descripcion: "Pinot Noir delicado, de cuerpo liviano y gran expresión frutal.",
     notasCata: "Cereza, frutilla, notas florales y un paso de boca sedoso.",
     maridaje: "Aves de caza, salmón grillado y quesos blandos.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-tinta.jpg",
   },
   {
     nombre: "Corazón de Piedra",
@@ -77,7 +77,7 @@ const vinos = [
     descripcion: "Cabernet Sauvignon robusto, con taninos firmes y gran potencial de guarda.",
     notasCata: "Cassis, pimienta negra, cedro y un final largo y especiado.",
     maridaje: "Carnes rojas maduradas, estofados y quesos añejos.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-tinta.jpg",
   },
   {
     nombre: "Puerta del Viento",
@@ -90,7 +90,7 @@ const vinos = [
     descripcion: "Malbec ícono de la bodega, de viñedos viejos y rendimientos muy bajos.",
     notasCata: "Mora, flores secas, especias orientales y taninos aterciopelados.",
     maridaje: "Cordero al asador, ciervo y platos de autor con carnes rojas.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-tinta.jpg",
   },
   {
     nombre: "Silencio de Altura",
@@ -103,7 +103,7 @@ const vinos = [
     descripcion: "Torrontés aromático de altura, fresco y con acidez vibrante.",
     notasCata: "Flores blancas, durazno, cítricos y un final seco y frutal.",
     maridaje: "Comida picante, ceviches y entradas de verano.",
-    imagenUrl: "/productos/placeholder.svg",
+    imagenUrl: "/productos/botella-blanca-2.jpg",
   },
 ];
 
