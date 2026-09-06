@@ -25,7 +25,7 @@ const vinos = [
     descripcion: "Cabernet Franc de parcela única, elegante y con marcada identidad de altura.",
     notasCata: "Pimiento asado, grafito, frutos rojos frescos y taninos sedosos.",
     maridaje: "Pastas rellenas, vegetales asados y quesos de cabra.",
-    imagenUrl: "/productos/botella-tinta.jpg",
+    imagenUrl: "/productos/botella-tinta-2.jpg",
   },
   {
     nombre: "Última Piedra",
@@ -38,7 +38,7 @@ const vinos = [
     descripcion: "Malbec de guarda con dos años de crianza, complejo y estructurado.",
     notasCata: "Ciruela negra, cacao, tabaco y notas balsámicas de larga persistencia.",
     maridaje: "Asado de tira, guisos de carne y chocolate amargo.",
-    imagenUrl: "/productos/botella-tinta.jpg",
+    imagenUrl: "/productos/botella-tinta-3.jpg",
   },
   {
     nombre: "Alma de Uco",
@@ -64,7 +64,7 @@ const vinos = [
     descripcion: "Pinot Noir delicado, de cuerpo liviano y gran expresión frutal.",
     notasCata: "Cereza, frutilla, notas florales y un paso de boca sedoso.",
     maridaje: "Aves de caza, salmón grillado y quesos blandos.",
-    imagenUrl: "/productos/botella-tinta.jpg",
+    imagenUrl: "/productos/botella-tinta-2.jpg",
   },
   {
     nombre: "Corazón de Piedra",
@@ -77,7 +77,7 @@ const vinos = [
     descripcion: "Cabernet Sauvignon robusto, con taninos firmes y gran potencial de guarda.",
     notasCata: "Cassis, pimienta negra, cedro y un final largo y especiado.",
     maridaje: "Carnes rojas maduradas, estofados y quesos añejos.",
-    imagenUrl: "/productos/botella-tinta.jpg",
+    imagenUrl: "/productos/botella-tinta-3.jpg",
   },
   {
     nombre: "Puerta del Viento",
