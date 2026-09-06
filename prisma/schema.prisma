@@ -28,6 +28,9 @@ model Usuario {
   rol             Rol      @default(CLIENTE)
   createdAt       DateTime @default(now()) @map("created_at")
 
+  resetToken       String?   @unique @map("reset_token")
+  resetTokenExpira DateTime? @map("reset_token_expira")
+
   pedidos      Pedido[]
   carritoItems CarritoItem[]
 

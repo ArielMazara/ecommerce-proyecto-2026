@@ -43,6 +43,24 @@ export async function iniciarSesion(datos) {
   return procesarRespuesta(res);
 }
 
+export async function solicitarRecuperacion(email) {
+  const res = await fetch(`${API_URL}/auth/solicitar-recuperacion`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  return procesarRespuesta(res);
+}
+
+export async function resetearContrasena(token, contrasena) {
+  const res = await fetch(`${API_URL}/auth/resetear-contrasena`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, contrasena }),
+  });
+  return procesarRespuesta(res);
+}
+
 function headersAuth(token) {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 }

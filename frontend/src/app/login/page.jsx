@@ -54,6 +54,12 @@ export default function LoginPage() {
           required
         />
 
+        <div className="text-right -mt-2">
+          <Link href="/recuperar" className="text-xs text-muted-foreground hover:text-gold transition-colors">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
+
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button type="submit" className="w-full" disabled={enviando}>
