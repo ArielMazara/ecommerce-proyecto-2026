@@ -15,7 +15,15 @@ function validarStock(items) {
   return null;
 }
 
-function crearPedidoConItems(usuarioId, items) {
+function validarDireccion(direccion) {
+  const campos = ["direccionCalle", "direccionCiudad", "direccionProvincia", "direccionCodigoPostal"];
+  for (const campo of campos) {
+    if (!direccion[campo]) return `Falta el campo "${campo}"`;
+  }
+  return null;
+}
+
+function crearPedidoConItems(usuarioId, items, direccion) {
   const total = items.reduce((acc, item) => acc + item.cantidad * Number(item.producto.precio), 0);
 
   return prisma.pedido.create({
@@ -23,6 +31,10 @@ function crearPedidoConItems(usuarioId, items) {
       usuarioId,
       estado: "PENDIENTE",
       total,
+      direccionCalle: direccion.direccionCalle,
+      direccionCiudad: direccion.direccionCiudad,
+      direccionProvincia: direccion.direccionProvincia,
+      direccionCodigoPostal: direccion.direccionCodigoPostal,
       items: {
         create: items.map((item) => ({
           productoId: item.productoId,
@@ -69,6 +81,9 @@ async function crearPreferencia(req, res) {
     return res.status(400).json({ error: "El carrito está vacío" });
   }
 
+  const errorDireccion = validarDireccion(req.body);
+  if (errorDireccion) return res.status(400).json({ error: errorDireccion });
+
   const errorStock = validarStock(itemsCarrito);
   if (errorStock) return res.status(400).json({ error: errorStock });
 
@@ -76,7 +91,7 @@ async function crearPreferencia(req, res) {
   // usar como external_reference), pero el carrito sólo se vacía si la
   // preferencia se creó con éxito: si Mercado Pago falla, deshacemos el
   // pedido en vez de dejar al usuario con un pedido fantasma y el carrito vacío.
-  const pedido = await crearPedidoConItems(req.usuario.id, itemsCarrito);
+  const pedido = await crearPedidoConItems(req.usuario.id, itemsCarrito, req.body);
 
   try {
     const preferencia = await crearPreferenciaParaPedido(pedido);
@@ -120,7 +135,12 @@ async function reintentarPedido(req, res) {
   const errorStock = validarStock(itemsFuente);
   if (errorStock) return res.status(400).json({ error: errorStock });
 
-  const pedidoNuevo = await crearPedidoConItems(req.usuario.id, itemsFuente);
+  const pedidoNuevo = await crearPedidoConItems(req.usuario.id, itemsFuente, {
+    direccionCalle: pedidoOriginal.direccionCalle,
+    direccionCiudad: pedidoOriginal.direccionCiudad,
+    direccionProvincia: pedidoOriginal.direccionProvincia,
+    direccionCodigoPostal: pedidoOriginal.direccionCodigoPostal,
+  });
 
   try {
     const preferencia = await crearPreferenciaParaPedido(pedidoNuevo);

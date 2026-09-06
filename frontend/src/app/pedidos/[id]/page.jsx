@@ -126,6 +126,22 @@ export default function DetallePedidoPage() {
           <span className="font-serif text-2xl text-gold">{formatearPrecio(Number(pedido.total))}</span>
         </div>
 
+        <div className="border-t border-border/60 pt-6">
+          <h2 className="text-xs uppercase tracking-wider text-gold mb-2">Dirección de envío</h2>
+          <p className="text-sm text-muted-foreground">
+            {pedido.direccionCalle}, {pedido.direccionCiudad}, {pedido.direccionProvincia} (CP {pedido.direccionCodigoPostal})
+          </p>
+        </div>
+
+        {pedido.estado === "ENVIADO" && (
+          <div className="border-t border-border/60 pt-6">
+            <h2 className="text-xs uppercase tracking-wider text-gold mb-2">Seguimiento del envío</h2>
+            <p className="text-sm text-muted-foreground">
+              {pedido.transportista} · {pedido.numeroSeguimiento}
+            </p>
+          </div>
+        )}
+
         {sePuedeReintentar && (
           <Button className="w-full" onClick={volverAComprar} disabled={reintentando}>
             {reintentando ? "Redirigiendo a Mercado Pago..." : "Volver a comprar"}

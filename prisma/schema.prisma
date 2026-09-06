@@ -85,6 +85,14 @@ model Pedido {
   estado    EstadoPedido @default(PENDIENTE)
   total     Decimal      @db.Decimal(10, 2)
 
+  direccionCalle        String  @map("direccion_calle")
+  direccionCiudad       String  @map("direccion_ciudad")
+  direccionProvincia    String  @map("direccion_provincia")
+  direccionCodigoPostal String  @map("direccion_codigo_postal")
+
+  transportista      String? @map("transportista")
+  numeroSeguimiento  String? @map("numero_seguimiento")
+
   usuario Usuario      @relation(fields: [usuarioId], references: [id])
   items   PedidoItem[]
 

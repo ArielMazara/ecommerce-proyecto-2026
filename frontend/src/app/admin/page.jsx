@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { obtenerProductos, crearProducto, actualizarProducto, eliminarProducto } from "@/lib/api";
@@ -149,12 +150,15 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen px-8 py-12 sm:px-16">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-2">
         <h1 className="font-serif text-4xl text-foreground">Administrar productos</h1>
         {editandoId === null && <Button onClick={abrirAlta}>Agregar producto</Button>}
       </div>
+      <Link href="/admin/pedidos" className="text-sm text-muted-foreground hover:text-gold transition-colors">
+        Ver pedidos y envíos →
+      </Link>
 
-      {error && <p className="text-sm text-destructive mb-4">{error}</p>}
+      {error && <p className="text-sm text-destructive mb-4 mt-6">{error}</p>}
 
       {editandoId !== null && (
         <form

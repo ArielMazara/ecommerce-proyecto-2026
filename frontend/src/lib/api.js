@@ -136,10 +136,11 @@ export async function eliminarDelCarrito(token, productoId) {
   avisarCarritoActualizado();
 }
 
-export async function crearPreferenciaCheckout(token) {
+export async function crearPreferenciaCheckout(token, direccion) {
   const res = await fetch(`${API_URL}/checkout/crear-preferencia`, {
     method: "POST",
     headers: headersAuth(token),
+    body: JSON.stringify(direccion),
   });
   const datos = await procesarRespuesta(res);
   avisarCarritoActualizado();
@@ -170,5 +171,20 @@ export async function obtenerPedidos(token) {
 
 export async function obtenerPedido(token, id) {
   const res = await fetch(`${API_URL}/pedidos/${id}`, { headers: headersAuth(token) });
+  return procesarRespuesta(res);
+}
+
+export async function obtenerPedidosAdmin(token, estado) {
+  const query = estado ? `?estado=${estado}` : "";
+  const res = await fetch(`${API_URL}/pedidos/admin/todos${query}`, { headers: headersAuth(token) });
+  return procesarRespuesta(res);
+}
+
+export async function marcarPedidoEnviado(token, id, datos) {
+  const res = await fetch(`${API_URL}/pedidos/admin/${id}/enviar`, {
+    method: "PATCH",
+    headers: headersAuth(token),
+    body: JSON.stringify(datos),
+  });
   return procesarRespuesta(res);
 }
