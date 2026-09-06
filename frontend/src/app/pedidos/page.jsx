@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { obtenerPedidos } from "@/lib/api";
+import { obtenerPedidos, reintentarPedido } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ESTADOS_PEDIDO } from "@/lib/estados-pedido";
 
 function formatearPrecio(precio) {
@@ -25,6 +26,8 @@ export default function PedidosPage() {
   const router = useRouter();
   const [pedidos, setPedidos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [reintentandoId, setReintentandoId] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (cargandoAuth) return;
@@ -39,6 +42,21 @@ export default function PedidosPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cargandoAuth, usuario]);
 
+  async function volverAComprar(e, pedidoId) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!token) return;
+    setError("");
+    setReintentandoId(pedidoId);
+    try {
+      const { initPoint } = await reintentarPedido(token, pedidoId);
+      window.location.href = initPoint;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo iniciar el pago");
+      setReintentandoId(null);
+    }
+  }
+
   if (cargandoAuth || cargando) {
     return <p className="px-8 py-12 sm:px-16 text-muted-foreground">Cargando pedidos...</p>;
   }
@@ -46,6 +64,8 @@ export default function PedidosPage() {
   return (
     <div className="min-h-screen px-8 py-12 sm:px-16">
       <h1 className="font-serif text-4xl text-foreground mb-8">Mis pedidos</h1>
+
+      {error && <p className="text-sm text-destructive mb-4 max-w-2xl">{error}</p>}
 
       {pedidos.length === 0 ? (
         <div>
@@ -59,6 +79,7 @@ export default function PedidosPage() {
           {pedidos.map((pedido) => {
             const estado = ESTADOS_PEDIDO[pedido.estado];
             const cantidadItems = pedido.items.reduce((acc, i) => acc + i.cantidad, 0);
+            const sePuedeReintentar = pedido.estado === "PENDIENTE" || pedido.estado === "CANCELADO";
 
             return (
               <Link
@@ -80,6 +101,16 @@ export default function PedidosPage() {
                   <span className="font-serif text-lg text-gold">
                     {formatearPrecio(Number(pedido.total))}
                   </span>
+                  {sePuedeReintentar && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => volverAComprar(e, pedido.id)}
+                      disabled={reintentandoId === pedido.id}
+                    >
+                      {reintentandoId === pedido.id ? "Redirigiendo..." : "Volver a comprar"}
+                    </Button>
+                  )}
                 </div>
               </Link>
             );

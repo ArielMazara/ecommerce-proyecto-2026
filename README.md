@@ -48,6 +48,7 @@ JWT_SECRET="un_secreto_random"
 MP_ACCESS_TOKEN="TEST-..."   # credenciales de prueba de Mercado Pago
 MP_PUBLIC_KEY="TEST-..."
 FRONTEND_URL="http://localhost:3000"
+RESEND_API_KEY="re_..."      # para el email de recuperación de contraseña
 ```
 
 **`frontend/.env.local`**:
@@ -84,6 +85,14 @@ cd frontend && npm run dev   # http://localhost:3000
 
 La integración usa Checkout Pro: el backend crea una "preferencia" y redirige al comprador a la página de pago hospedada por Mercado Pago — la app nunca toca ni almacena datos de tarjeta. La confirmación de pago (`POST /api/checkout/confirmar` y el webhook) siempre revalida el estado contra la API de Mercado Pago desde el servidor antes de marcar un pedido como pagado; nunca confía en los query params que vuelven por el navegador.
 
+## Recuperación de contraseña (Resend)
+
+1. Crear una cuenta gratis en [resend.com](https://resend.com).
+2. "API Keys" → crear una → copiarla a `RESEND_API_KEY` en `backend/.env`.
+3. Sin verificar un dominio propio, Resend sólo entrega emails a la dirección con la que te registraste (modo de prueba) — alcanza para probar el flujo en desarrollo. Para que le llegue a cualquier usuario en producción hay que verificar un dominio en Resend y usarlo en `RESEND_FROM_EMAIL`.
+
+El flujo: `POST /api/auth/solicitar-recuperacion` genera un token aleatorio con expiración de 1 hora y manda el link por mail (responde el mismo mensaje exista o no la cuenta, para no filtrar qué emails están registrados); `POST /api/auth/resetear-contrasena` valida el token y actualiza la contraseña.
+
 ## Funcionalidades implementadas
 
 1. Setup del proyecto (Next.js, Express, Prisma, Postgres)
@@ -94,6 +103,7 @@ La integración usa Checkout Pro: el backend crea una "preferencia" y redirige a
 6. Carrito de compras persistente por usuario (agregar/quitar/modificar cantidad)
 7. Checkout con Mercado Pago (Checkout Pro, sandbox)
 8. Panel de usuario con historial de pedidos
+9. Recuperación de contraseña por email (Resend)
 
 ## Decisiones y notas técnicas
 

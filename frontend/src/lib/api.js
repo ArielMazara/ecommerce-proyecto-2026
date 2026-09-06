@@ -43,6 +43,24 @@ export async function iniciarSesion(datos) {
   return procesarRespuesta(res);
 }
 
+export async function solicitarRecuperacion(email) {
+  const res = await fetch(`${API_URL}/auth/solicitar-recuperacion`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  return procesarRespuesta(res);
+}
+
+export async function resetearContrasena(token, contrasena) {
+  const res = await fetch(`${API_URL}/auth/resetear-contrasena`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, contrasena }),
+  });
+  return procesarRespuesta(res);
+}
+
 function headersAuth(token) {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 }
@@ -97,6 +115,14 @@ export async function crearPreferenciaCheckout(token) {
   const datos = await procesarRespuesta(res);
   avisarCarritoActualizado();
   return datos;
+}
+
+export async function reintentarPedido(token, pedidoId) {
+  const res = await fetch(`${API_URL}/checkout/reintentar/${pedidoId}`, {
+    method: "POST",
+    headers: headersAuth(token),
+  });
+  return procesarRespuesta(res);
 }
 
 export async function confirmarPagoCheckout(token, paymentId) {
