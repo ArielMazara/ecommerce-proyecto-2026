@@ -103,6 +103,8 @@ UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu-email@ejemplo.com';
 
 Después hay que volver a iniciar sesión para que el nuevo JWT incluya el rol actualizado.
 
+`/admin/pedidos` muestra todos los pedidos de todos los usuarios con su dirección de envío. Para los que están `PAGADO`, el admin carga transportista + número de seguimiento y los marca como `ENVIADO`; el cliente ve esa info en el detalle de su pedido. La dirección se pide en el checkout (carrito) antes de generar la preferencia de Mercado Pago.
+
 ## Funcionalidades implementadas
 
 1. Setup del proyecto (Next.js, Express, Prisma, Postgres)
@@ -115,6 +117,7 @@ Después hay que volver a iniciar sesión para que el nuevo JWT incluya el rol a
 8. Panel de usuario con historial de pedidos
 9. Recuperación de contraseña por email (Resend)
 10. Panel de administración para crear, editar y borrar productos (stock incluido)
+11. Dirección de envío en el checkout y gestión de envíos (transportista + seguimiento) desde el panel admin
 
 ## Decisiones y notas técnicas
 

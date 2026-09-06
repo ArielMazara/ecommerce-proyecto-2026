@@ -12,6 +12,9 @@ import {
   crearPreferenciaCheckout,
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+const DIRECCION_VACIA = { calle: "", ciudad: "", provincia: "", codigoPostal: "" };
 
 function formatearPrecio(precio) {
   return new Intl.NumberFormat("es-AR", {
@@ -29,6 +32,7 @@ export default function CarritoPage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [procesandoPago, setProcesandoPago] = useState(false);
+  const [direccion, setDireccion] = useState(DIRECCION_VACIA);
 
   useEffect(() => {
     if (cargandoAuth) return;
@@ -68,12 +72,27 @@ export default function CarritoPage() {
     cargarCarrito();
   }
 
+  function actualizarDireccion(campo, valor) {
+    setDireccion((prev) => ({ ...prev, [campo]: valor }));
+  }
+
   async function irAPagar() {
     if (!token) return;
     setError("");
+
+    if (!direccion.calle || !direccion.ciudad || !direccion.provincia || !direccion.codigoPostal) {
+      setError("Completá la dirección de envío para continuar");
+      return;
+    }
+
     setProcesandoPago(true);
     try {
-      const { initPoint } = await crearPreferenciaCheckout(token);
+      const { initPoint } = await crearPreferenciaCheckout(token, {
+        direccionCalle: direccion.calle,
+        direccionCiudad: direccion.ciudad,
+        direccionProvincia: direccion.provincia,
+        direccionCodigoPostal: direccion.codigoPostal,
+      });
       window.location.href = initPoint;
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo iniciar el pago");
@@ -146,6 +165,33 @@ export default function CarritoPage() {
               </Button>
             </div>
           ))}
+
+          <div className="pt-6 border-t border-border/60 max-w-2xl">
+            <h2 className="font-serif text-lg text-foreground mb-4">Dirección de envío</h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Input
+                placeholder="Calle y número"
+                value={direccion.calle}
+                onChange={(e) => actualizarDireccion("calle", e.target.value)}
+                className="sm:col-span-2"
+              />
+              <Input
+                placeholder="Ciudad"
+                value={direccion.ciudad}
+                onChange={(e) => actualizarDireccion("ciudad", e.target.value)}
+              />
+              <Input
+                placeholder="Provincia"
+                value={direccion.provincia}
+                onChange={(e) => actualizarDireccion("provincia", e.target.value)}
+              />
+              <Input
+                placeholder="Código postal"
+                value={direccion.codigoPostal}
+                onChange={(e) => actualizarDireccion("codigoPostal", e.target.value)}
+              />
+            </div>
+          </div>
 
           <div className="flex items-center justify-between pt-6 border-t border-border/60 max-w-2xl">
             <span className="text-lg text-foreground">Total</span>
