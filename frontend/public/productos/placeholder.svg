@@ -1,0 +1,50 @@
+<svg viewBox="0 0 320 740" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Botella de vino Altos del Uco">
+  <defs>
+    <linearGradient id="bh-glass" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#040302" />
+      <stop offset="34%" stop-color="#2a1d12" />
+      <stop offset="50%" stop-color="#4a3220" />
+      <stop offset="68%" stop-color="#221709" />
+      <stop offset="100%" stop-color="#040302" />
+    </linearGradient>
+    <linearGradient id="bh-rim" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e3a866" stop-opacity="0" />
+      <stop offset="14%" stop-color="#e3a866" stop-opacity="0.85" />
+      <stop offset="26%" stop-color="#e3a866" stop-opacity="0" />
+    </linearGradient>
+    <radialGradient id="bh-glow" cx="50%" cy="22%" r="42%">
+      <stop offset="0%" stop-color="#c1793f" stop-opacity="0.28" />
+      <stop offset="45%" stop-color="#c1793f" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#c1793f" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="bh-shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <clipPath id="bh-clip">
+      <path d="M140,18 L180,18 L180,128 C180,148 202,158 212,180 C228,206 262,222 262,262 L262,656 C262,675 246,688 225,688 L95,688 C74,688 58,675 58,656 L58,262 C58,222 92,206 108,180 C118,158 140,148 140,128 Z" />
+    </clipPath>
+  </defs>
+
+  <rect width="320" height="740" fill="#1a130f" />
+
+  <ellipse cx="160" cy="220" rx="240" ry="240" fill="url(#bh-glow)" />
+  <ellipse cx="160" cy="706" rx="120" ry="22" fill="url(#bh-shadow)" />
+
+  <path d="M140,18 L180,18 L180,128 C180,148 202,158 212,180 C228,206 262,222 262,262 L262,656 C262,675 246,688 225,688 L95,688 C74,688 58,675 58,656 L58,262 C58,222 92,206 108,180 C118,158 140,148 140,128 Z" fill="url(#bh-glass)" />
+
+  <g clip-path="url(#bh-clip)">
+    <rect x="52" y="0" width="36" height="740" fill="url(#bh-rim)" />
+    <ellipse cx="160" cy="140" rx="100" ry="50" fill="#e3a866" opacity="0.1" />
+  </g>
+
+  <path d="M140,18 L180,18 L180,128 C180,148 202,158 212,180 C228,206 262,222 262,262 L262,656 C262,675 246,688 225,688 L95,688 C74,688 58,675 58,656 L58,262 C58,222 92,206 108,180 C118,158 140,148 140,128 Z" fill="none" stroke="#c1793f" stroke-opacity="0.35" stroke-width="1.25" />
+
+  <rect x="90" y="386" width="140" height="132" fill="none" stroke="#c1793f" stroke-opacity="0.7" stroke-width="1" />
+  <text x="160" y="432" text-anchor="middle" fill="#dba368" font-family="Georgia, 'Playfair Display', serif" font-size="16" letter-spacing="4">ALTOS</text>
+  <line x1="114" y1="446" x2="206" y2="446" stroke="#c1793f" stroke-opacity="0.55" stroke-width="0.75" />
+  <text x="160" y="470" text-anchor="middle" fill="#dba368" font-family="Georgia, 'Playfair Display', serif" font-size="12" letter-spacing="3">DEL UCO</text>
+  <text x="160" y="498" text-anchor="middle" fill="#e3d4bc" font-family="Georgia, serif" font-size="8" letter-spacing="1.5" opacity="0.7">VALLE DE UCO</text>
+
+  <rect x="133" y="6" width="54" height="32" rx="2" fill="url(#bh-glass)" stroke="#c1793f" stroke-opacity="0.55" stroke-width="1" />
+</svg>

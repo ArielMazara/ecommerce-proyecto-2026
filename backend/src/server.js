@@ -1,0 +1,34 @@
+require("dotenv/config");
+const express = require("express");
+const cors = require("cors");
+const authRoutes = require("./routes/auth");
+const productRoutes = require("./routes/products");
+const cartRoutes = require("./routes/cart");
+const checkoutRoutes = require("./routes/checkout");
+const orderRoutes = require("./routes/orders");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+app.use("/api/auth", authRoutes);
+app.use("/api/productos", productRoutes);
+app.use("/api/carrito", cartRoutes);
+app.use("/api/checkout", checkoutRoutes);
+app.use("/api/pedidos", orderRoutes);
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: "Error interno del servidor" });
+});
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor de Altos del Uco corriendo en http://localhost:${PORT}`);
+});
