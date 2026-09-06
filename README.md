@@ -103,6 +103,8 @@ El flujo: `POST /api/auth/solicitar-recuperacion` genera un token aleatorio con 
 UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu-email@ejemplo.com';
 ```
 
+También se puede definir `ADMIN_EMAILS` en `backend/.env` (emails separados por coma) — cualquiera que se registre con uno de esos emails queda como `ADMIN` automáticamente, sin tocar la base. Sólo aplica al registrarse, no a cuentas ya existentes.
+
 Después hay que volver a iniciar sesión para que el nuevo JWT incluya el rol actualizado.
 
 `/admin/pedidos` muestra todos los pedidos de todos los usuarios con su dirección de envío. Para los que están `PAGADO`, el admin carga transportista + número de seguimiento y los marca como `ENVIADO`; el cliente ve esa info en el detalle de su pedido. La dirección se pide en el checkout (carrito) antes de generar la preferencia de Mercado Pago.
