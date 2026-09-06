@@ -1,5 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+  // Ruta de salida explícita: el schema vive fuera de /backend, y sin esto
+  // Prisma resuelve de forma ambigua dónde generar el cliente (funciona
+  // distinto según el entorno — localmente termina en backend/node_modules,
+  // pero en Render terminaba un nivel más arriba, dejando el cliente que
+  // corre en runtime desactualizado aunque "prisma generate" no fallara).
+  output   = "../backend/generated/prisma-client"
 }
 
 datasource db {
