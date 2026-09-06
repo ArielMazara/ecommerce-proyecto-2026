@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Inter, Playfair_Display, Parisienne } from "next/font/google";
 import { AuthProvider } from "@/context/auth-context";
 import { Header } from "@/components/header";
@@ -22,16 +21,12 @@ const parisienne = Parisienne({
   weight: "400",
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Altos del Uco — Vinos de bodegas boutique",
   description: "Vinos de bodegas boutique del Valle de Uco, Mendoza.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="es" className="dark">
       <body className={`${inter.variable} ${playfair.variable} ${parisienne.variable} antialiased`}>

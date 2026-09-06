@@ -4,9 +4,8 @@ import { notFound } from "next/navigation";
 import { obtenerProducto } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { AgregarCarritoButton } from "@/components/agregar-carrito-button";
-import type { Producto } from "@/types/producto";
 
-function formatearPrecio(precio: string) {
+function formatearPrecio(precio) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
@@ -14,14 +13,10 @@ function formatearPrecio(precio: string) {
   }).format(Number(precio));
 }
 
-export default async function FichaProducto({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function FichaProducto({ params }) {
   const { id } = await params;
 
-  let producto: Producto;
+  let producto;
   try {
     producto = await obtenerProducto(id);
   } catch {

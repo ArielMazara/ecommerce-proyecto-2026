@@ -10,9 +10,8 @@ import {
   TextureSeparator,
 } from "@/components/ui/texture-card";
 import { Badge } from "@/components/ui/badge";
-import type { Producto } from "@/types/producto";
 
-function formatearPrecio(precio: string) {
+function formatearPrecio(precio) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
@@ -20,7 +19,7 @@ function formatearPrecio(precio: string) {
   }).format(Number(precio));
 }
 
-export function ProductoCard({ producto }: { producto: Producto }) {
+export function ProductoCard({ producto }) {
   return (
     <motion.div
       whileHover={{ y: -6 }}

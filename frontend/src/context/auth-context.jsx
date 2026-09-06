@@ -3,32 +3,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { iniciarSesion, registrarUsuario } from "@/lib/api";
 
-type Usuario = {
-  id: number;
-  nombre: string;
-  email: string;
-  rol: string;
-};
+const AuthContext = createContext(null);
 
-type AuthContextType = {
-  usuario: Usuario | null;
-  token: string | null;
-  cargando: boolean;
-  login: (email: string, contrasena: string) => Promise<void>;
-  registro: (datos: {
-    nombre: string;
-    email: string;
-    contrasena: string;
-    fechaNacimiento: string;
-  }) => Promise<void>;
-  logout: () => void;
-};
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+export function AuthProvider({ children }) {
+  const [usuario, setUsuario] = useState(null);
+  const [token, setToken] = useState(null);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
@@ -41,23 +20,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCargando(false);
   }, []);
 
-  function guardarSesion(usuario: Usuario, token: string) {
+  function guardarSesion(usuario, token) {
     setUsuario(usuario);
     setToken(token);
     localStorage.setItem("auth", JSON.stringify({ usuario, token }));
   }
 
-  async function login(email: string, contrasena: string) {
+  async function login(email, contrasena) {
     const { usuario, token } = await iniciarSesion({ email, contrasena });
     guardarSesion(usuario, token);
   }
 
-  async function registro(datos: {
-    nombre: string;
-    email: string;
-    contrasena: string;
-    fechaNacimiento: string;
-  }) {
+  async function registro(datos) {
     const { usuario, token } = await registrarUsuario(datos);
     guardarSesion(usuario, token);
   }

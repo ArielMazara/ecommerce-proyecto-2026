@@ -6,9 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { confirmarPagoCheckout } from "@/lib/api";
 
-type Resultado = "cargando" | "aprobado" | "pendiente" | "rechazado" | "error";
-
-const MENSAJES: Record<Resultado, { titulo: string; descripcion: string }> = {
+const MENSAJES = {
   cargando: { titulo: "Confirmando el pago...", descripcion: "Un momento, por favor." },
   aprobado: {
     titulo: "¡Gracias por tu compra!",
@@ -31,7 +29,7 @@ const MENSAJES: Record<Resultado, { titulo: string; descripcion: string }> = {
 function ResultadoContenido() {
   const searchParams = useSearchParams();
   const { token, cargando: cargandoAuth } = useAuth();
-  const [resultado, setResultado] = useState<Resultado>("cargando");
+  const [resultado, setResultado] = useState("cargando");
 
   useEffect(() => {
     if (cargandoAuth) return;

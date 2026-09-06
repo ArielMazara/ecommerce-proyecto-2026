@@ -17,8 +17,8 @@ export function Header() {
     }
 
     function actualizarContador() {
-      obtenerCarrito(token!)
-        .then(({ items }) => setCantidadCarrito(items.reduce((acc: number, i: { cantidad: number }) => acc + i.cantidad, 0)))
+      obtenerCarrito(token)
+        .then(({ items }) => setCantidadCarrito(items.reduce((acc, i) => acc + i.cantidad, 0)))
         .catch(() => setCantidadCarrito(0));
     }
 

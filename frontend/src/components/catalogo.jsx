@@ -12,19 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Producto } from "@/types/producto";
 
 const TODOS = "__todos__";
 
-type Filtros = {
-  varietal: string;
-  bodega: string;
-  anada: string;
-  precioMin: string;
-  precioMax: string;
-};
-
-const filtrosVacios: Filtros = {
+const filtrosVacios = {
   varietal: "",
   bodega: "",
   anada: "",
@@ -33,17 +24,17 @@ const filtrosVacios: Filtros = {
 };
 
 export function Catalogo() {
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const [opciones, setOpciones] = useState<{ varietales: string[]; bodegas: string[]; anadas: number[] }>({
+  const [productos, setProductos] = useState([]);
+  const [opciones, setOpciones] = useState({
     varietales: [],
     bodegas: [],
     anadas: [],
   });
-  const [filtros, setFiltros] = useState<Filtros>(filtrosVacios);
+  const [filtros, setFiltros] = useState(filtrosVacios);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    obtenerProductos().then((todos: Producto[]) => {
+    obtenerProductos().then((todos) => {
       setOpciones({
         varietales: [...new Set(todos.map((p) => p.varietal))].sort(),
         bodegas: [...new Set(todos.map((p) => p.bodega))].sort(),
@@ -59,7 +50,7 @@ export function Catalogo() {
       .finally(() => setCargando(false));
   }, [filtros]);
 
-  function actualizar(campo: keyof Filtros, valor: string) {
+  function actualizar(campo, valor) {
     setFiltros((prev) => ({ ...prev, [campo]: valor === TODOS ? "" : valor }));
   }
 

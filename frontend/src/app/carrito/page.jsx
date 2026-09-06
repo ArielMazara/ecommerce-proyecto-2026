@@ -13,20 +13,7 @@ import {
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 
-type ItemCarrito = {
-  id: number;
-  cantidad: number;
-  producto: {
-    id: number;
-    nombre: string;
-    bodega: string;
-    precio: string;
-    stock: number;
-    imagenUrl: string | null;
-  };
-};
-
-function formatearPrecio(precio: number) {
+function formatearPrecio(precio) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
@@ -37,7 +24,7 @@ function formatearPrecio(precio: number) {
 export default function CarritoPage() {
   const { usuario, token, cargando: cargandoAuth } = useAuth();
   const router = useRouter();
-  const [items, setItems] = useState<ItemCarrito[]>([]);
+  const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -64,7 +51,7 @@ export default function CarritoPage() {
       .finally(() => setCargando(false));
   }
 
-  async function cambiarCantidad(productoId: number, cantidad: number) {
+  async function cambiarCantidad(productoId, cantidad) {
     if (!token || cantidad < 1) return;
     setError("");
     try {
@@ -75,7 +62,7 @@ export default function CarritoPage() {
     }
   }
 
-  async function quitar(productoId: number) {
+  async function quitar(productoId) {
     if (!token) return;
     await eliminarDelCarrito(token, productoId);
     cargarCarrito();

@@ -1,14 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
-export type FiltrosProductos = {
-  varietal?: string;
-  bodega?: string;
-  anada?: string;
-  precioMin?: string;
-  precioMax?: string;
-};
-
-export async function obtenerProductos(filtros: FiltrosProductos = {}) {
+export async function obtenerProductos(filtros = {}) {
   const params = new URLSearchParams();
   Object.entries(filtros).forEach(([clave, valor]) => {
     if (valor) params.set(clave, valor);
@@ -21,24 +13,19 @@ export async function obtenerProductos(filtros: FiltrosProductos = {}) {
   return res.json();
 }
 
-export async function obtenerProducto(id: string) {
+export async function obtenerProducto(id) {
   const res = await fetch(`${API_URL}/productos/${id}`);
   if (!res.ok) throw new Error("Producto no encontrado");
   return res.json();
 }
 
-async function procesarRespuesta(res: Response) {
+async function procesarRespuesta(res) {
   const datos = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(datos.error || "Ocurrió un error");
   return datos;
 }
 
-export async function registrarUsuario(datos: {
-  nombre: string;
-  email: string;
-  contrasena: string;
-  fechaNacimiento: string;
-}) {
+export async function registrarUsuario(datos) {
   const res = await fetch(`${API_URL}/auth/registro`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -47,7 +34,7 @@ export async function registrarUsuario(datos: {
   return procesarRespuesta(res);
 }
 
-export async function iniciarSesion(datos: { email: string; contrasena: string }) {
+export async function iniciarSesion(datos) {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -56,7 +43,7 @@ export async function iniciarSesion(datos: { email: string; contrasena: string }
   return procesarRespuesta(res);
 }
 
-function headersAuth(token: string) {
+function headersAuth(token) {
   return { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
 }
 
@@ -66,12 +53,12 @@ function avisarCarritoActualizado() {
   window.dispatchEvent(new Event(EVENTO_CARRITO_ACTUALIZADO));
 }
 
-export async function obtenerCarrito(token: string) {
+export async function obtenerCarrito(token) {
   const res = await fetch(`${API_URL}/carrito`, { headers: headersAuth(token) });
   return procesarRespuesta(res);
 }
 
-export async function agregarAlCarrito(token: string, productoId: number, cantidad = 1) {
+export async function agregarAlCarrito(token, productoId, cantidad = 1) {
   const res = await fetch(`${API_URL}/carrito`, {
     method: "POST",
     headers: headersAuth(token),
@@ -82,7 +69,7 @@ export async function agregarAlCarrito(token: string, productoId: number, cantid
   return datos;
 }
 
-export async function actualizarCantidadCarrito(token: string, productoId: number, cantidad: number) {
+export async function actualizarCantidadCarrito(token, productoId, cantidad) {
   const res = await fetch(`${API_URL}/carrito/${productoId}`, {
     method: "PUT",
     headers: headersAuth(token),
@@ -93,7 +80,7 @@ export async function actualizarCantidadCarrito(token: string, productoId: numbe
   return datos;
 }
 
-export async function eliminarDelCarrito(token: string, productoId: number) {
+export async function eliminarDelCarrito(token, productoId) {
   const res = await fetch(`${API_URL}/carrito/${productoId}`, {
     method: "DELETE",
     headers: headersAuth(token),
@@ -102,7 +89,7 @@ export async function eliminarDelCarrito(token: string, productoId: number) {
   avisarCarritoActualizado();
 }
 
-export async function crearPreferenciaCheckout(token: string) {
+export async function crearPreferenciaCheckout(token) {
   const res = await fetch(`${API_URL}/checkout/crear-preferencia`, {
     method: "POST",
     headers: headersAuth(token),
@@ -112,7 +99,7 @@ export async function crearPreferenciaCheckout(token: string) {
   return datos;
 }
 
-export async function confirmarPagoCheckout(token: string, paymentId: string) {
+export async function confirmarPagoCheckout(token, paymentId) {
   const res = await fetch(`${API_URL}/checkout/confirmar`, {
     method: "POST",
     headers: headersAuth(token),
@@ -121,12 +108,12 @@ export async function confirmarPagoCheckout(token: string, paymentId: string) {
   return procesarRespuesta(res);
 }
 
-export async function obtenerPedidos(token: string) {
+export async function obtenerPedidos(token) {
   const res = await fetch(`${API_URL}/pedidos`, { headers: headersAuth(token) });
   return procesarRespuesta(res);
 }
 
-export async function obtenerPedido(token: string, id: string) {
+export async function obtenerPedido(token, id) {
   const res = await fetch(`${API_URL}/pedidos/${id}`, { headers: headersAuth(token) });
   return procesarRespuesta(res);
 }
