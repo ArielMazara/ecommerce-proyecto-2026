@@ -84,6 +84,7 @@ model Pedido {
   fecha     DateTime     @default(now())
   estado    EstadoPedido @default(PENDIENTE)
   total     Decimal      @db.Decimal(10, 2)
+  costoEnvio Decimal     @default(0) @map("costo_envio") @db.Decimal(10, 2)
 
   direccionCalle        String  @map("direccion_calle")
   direccionCiudad       String  @map("direccion_ciudad")

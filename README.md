@@ -49,6 +49,8 @@ MP_ACCESS_TOKEN="TEST-..."   # credenciales de prueba de Mercado Pago
 MP_PUBLIC_KEY="TEST-..."
 FRONTEND_URL="http://localhost:3000"
 RESEND_API_KEY="re_..."      # para el email de recuperación de contraseña
+COSTO_ENVIO=3000             # envío fijo en ARS
+ENVIO_GRATIS_DESDE=50000     # a partir de este subtotal, envío gratis
 ```
 
 **`frontend/.env.local`**:
@@ -104,6 +106,8 @@ UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu-email@ejemplo.com';
 Después hay que volver a iniciar sesión para que el nuevo JWT incluya el rol actualizado.
 
 `/admin/pedidos` muestra todos los pedidos de todos los usuarios con su dirección de envío. Para los que están `PAGADO`, el admin carga transportista + número de seguimiento y los marca como `ENVIADO`; el cliente ve esa info en el detalle de su pedido. La dirección se pide en el checkout (carrito) antes de generar la preferencia de Mercado Pago.
+
+El costo de envío es una tarifa fija (`COSTO_ENVIO`) con envío gratis a partir de cierto subtotal (`ENVIO_GRATIS_DESDE`), configurables por variable de entorno. Se cobra como un ítem separado ("Envío") en la preferencia de Mercado Pago, y se guarda en `Pedido.costoEnvio` para poder mostrar el desglose subtotal/envío/total en el carrito y en el historial de pedidos.
 
 ## Funcionalidades implementadas
 

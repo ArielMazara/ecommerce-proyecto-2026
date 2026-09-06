@@ -1,5 +1,6 @@
 const prisma = require("../lib/prisma");
 const { preferenceClient, paymentClient } = require("../lib/mercadopago");
+const { calcularCostoEnvio } = require("../lib/envio");
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 // Mercado Pago rechaza auto_return si las back_urls no son un dominio público
@@ -24,13 +25,15 @@ function validarDireccion(direccion) {
 }
 
 function crearPedidoConItems(usuarioId, items, direccion) {
-  const total = items.reduce((acc, item) => acc + item.cantidad * Number(item.producto.precio), 0);
+  const subtotal = items.reduce((acc, item) => acc + item.cantidad * Number(item.producto.precio), 0);
+  const costoEnvio = calcularCostoEnvio(subtotal);
 
   return prisma.pedido.create({
     data: {
       usuarioId,
       estado: "PENDIENTE",
-      total,
+      total: subtotal + costoEnvio,
+      costoEnvio,
       direccionCalle: direccion.direccionCalle,
       direccionCiudad: direccion.direccionCiudad,
       direccionProvincia: direccion.direccionProvincia,
@@ -48,15 +51,23 @@ function crearPedidoConItems(usuarioId, items, direccion) {
 }
 
 function crearPreferenciaParaPedido(pedido) {
+  const itemsEnvio =
+    Number(pedido.costoEnvio) > 0
+      ? [{ id: "envio", title: "Envío", quantity: 1, unit_price: Number(pedido.costoEnvio), currency_id: "ARS" }]
+      : [];
+
   return preferenceClient.create({
     body: {
-      items: pedido.items.map((item) => ({
-        id: String(item.productoId),
-        title: item.producto.nombre,
-        quantity: item.cantidad,
-        unit_price: Number(item.precioUnitario),
-        currency_id: "ARS",
-      })),
+      items: [
+        ...pedido.items.map((item) => ({
+          id: String(item.productoId),
+          title: item.producto.nombre,
+          quantity: item.cantidad,
+          unit_price: Number(item.precioUnitario),
+          currency_id: "ARS",
+        })),
+        ...itemsEnvio,
+      ],
       back_urls: {
         success: `${FRONTEND_URL}/checkout/resultado`,
         failure: `${FRONTEND_URL}/checkout/resultado`,
