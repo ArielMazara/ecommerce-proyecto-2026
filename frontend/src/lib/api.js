@@ -99,6 +99,14 @@ export async function crearPreferenciaCheckout(token) {
   return datos;
 }
 
+export async function reintentarPedido(token, pedidoId) {
+  const res = await fetch(`${API_URL}/checkout/reintentar/${pedidoId}`, {
+    method: "POST",
+    headers: headersAuth(token),
+  });
+  return procesarRespuesta(res);
+}
+
 export async function confirmarPagoCheckout(token, paymentId) {
   const res = await fetch(`${API_URL}/checkout/confirmar`, {
     method: "POST",

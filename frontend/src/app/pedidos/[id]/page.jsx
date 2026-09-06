@@ -5,8 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-import { obtenerPedido } from "@/lib/api";
+import { obtenerPedido, reintentarPedido } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ESTADOS_PEDIDO } from "@/lib/estados-pedido";
 
 function formatearPrecio(precio) {
@@ -29,6 +30,7 @@ export default function DetallePedidoPage() {
   const router = useRouter();
   const [pedido, setPedido] = useState(null);
   const [error, setError] = useState("");
+  const [reintentando, setReintentando] = useState(false);
 
   useEffect(() => {
     if (cargandoAuth) return;
@@ -42,6 +44,19 @@ export default function DetallePedidoPage() {
       .catch((err) => setError(err instanceof Error ? err.message : "No se pudo cargar el pedido"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cargandoAuth, usuario, id]);
+
+  async function volverAComprar() {
+    if (!token || !pedido) return;
+    setError("");
+    setReintentando(true);
+    try {
+      const { initPoint } = await reintentarPedido(token, pedido.id);
+      window.location.href = initPoint;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo iniciar el pago");
+      setReintentando(false);
+    }
+  }
 
   if (cargandoAuth || (!pedido && !error)) {
     return <p className="px-8 py-12 sm:px-16 text-muted-foreground">Cargando pedido...</p>;
@@ -59,6 +74,7 @@ export default function DetallePedidoPage() {
   }
 
   const estado = ESTADOS_PEDIDO[pedido.estado];
+  const sePuedeReintentar = pedido.estado === "PENDIENTE" || pedido.estado === "CANCELADO";
 
   return (
     <div className="min-h-screen px-8 py-12 sm:px-16">
@@ -75,6 +91,8 @@ export default function DetallePedidoPage() {
           {estado.etiqueta}
         </Badge>
       </div>
+
+      {error && <p className="text-sm text-destructive mb-4 max-w-2xl">{error}</p>}
 
       <div className="space-y-4 max-w-2xl">
         {pedido.items.map((item) => (
@@ -107,6 +125,12 @@ export default function DetallePedidoPage() {
           <span className="text-lg text-foreground">Total</span>
           <span className="font-serif text-2xl text-gold">{formatearPrecio(Number(pedido.total))}</span>
         </div>
+
+        {sePuedeReintentar && (
+          <Button className="w-full" onClick={volverAComprar} disabled={reintentando}>
+            {reintentando ? "Redirigiendo a Mercado Pago..." : "Volver a comprar"}
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -6,6 +6,59 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 // (falla con "back_url.success must be defined" cuando apuntan a localhost).
 const ES_URL_PUBLICA = !FRONTEND_URL.includes("localhost");
 
+function validarStock(items) {
+  for (const item of items) {
+    if (item.cantidad > item.producto.stock) {
+      return `No hay suficiente stock de "${item.producto.nombre}"`;
+    }
+  }
+  return null;
+}
+
+function crearPedidoConItems(usuarioId, items) {
+  const total = items.reduce((acc, item) => acc + item.cantidad * Number(item.producto.precio), 0);
+
+  return prisma.pedido.create({
+    data: {
+      usuarioId,
+      estado: "PENDIENTE",
+      total,
+      items: {
+        create: items.map((item) => ({
+          productoId: item.productoId,
+          cantidad: item.cantidad,
+          precioUnitario: item.producto.precio,
+        })),
+      },
+    },
+    include: { items: { include: { producto: true } } },
+  });
+}
+
+function crearPreferenciaParaPedido(pedido) {
+  return preferenceClient.create({
+    body: {
+      items: pedido.items.map((item) => ({
+        id: String(item.productoId),
+        title: item.producto.nombre,
+        quantity: item.cantidad,
+        unit_price: Number(item.precioUnitario),
+        currency_id: "ARS",
+      })),
+      back_urls: {
+        success: `${FRONTEND_URL}/checkout/resultado`,
+        failure: `${FRONTEND_URL}/checkout/resultado`,
+        pending: `${FRONTEND_URL}/checkout/resultado`,
+      },
+      ...(ES_URL_PUBLICA ? { auto_return: "approved" } : {}),
+      external_reference: String(pedido.id),
+      notification_url: process.env.BACKEND_URL
+        ? `${process.env.BACKEND_URL}/api/checkout/webhook`
+        : undefined,
+    },
+  });
+}
+
 async function crearPreferencia(req, res) {
   const itemsCarrito = await prisma.carritoItem.findMany({
     where: { usuarioId: req.usuario.id },
@@ -16,66 +69,66 @@ async function crearPreferencia(req, res) {
     return res.status(400).json({ error: "El carrito está vacío" });
   }
 
-  for (const item of itemsCarrito) {
-    if (item.cantidad > item.producto.stock) {
-      return res.status(400).json({ error: `No hay suficiente stock de "${item.producto.nombre}"` });
-    }
-  }
-
-  const total = itemsCarrito.reduce(
-    (acc, item) => acc + item.cantidad * Number(item.producto.precio),
-    0
-  );
+  const errorStock = validarStock(itemsCarrito);
+  if (errorStock) return res.status(400).json({ error: errorStock });
 
   // El pedido se crea antes de llamar a Mercado Pago (para tener un id que
   // usar como external_reference), pero el carrito sólo se vacía si la
   // preferencia se creó con éxito: si Mercado Pago falla, deshacemos el
   // pedido en vez de dejar al usuario con un pedido fantasma y el carrito vacío.
-  const pedido = await prisma.pedido.create({
-    data: {
-      usuarioId: req.usuario.id,
-      estado: "PENDIENTE",
-      total,
-      items: {
-        create: itemsCarrito.map((item) => ({
-          productoId: item.productoId,
-          cantidad: item.cantidad,
-          precioUnitario: item.producto.precio,
-        })),
-      },
-    },
-    include: { items: { include: { producto: true } } },
-  });
+  const pedido = await crearPedidoConItems(req.usuario.id, itemsCarrito);
 
   try {
-    const preferencia = await preferenceClient.create({
-      body: {
-        items: pedido.items.map((item) => ({
-          id: String(item.productoId),
-          title: item.producto.nombre,
-          quantity: item.cantidad,
-          unit_price: Number(item.precioUnitario),
-          currency_id: "ARS",
-        })),
-        back_urls: {
-          success: `${FRONTEND_URL}/checkout/resultado`,
-          failure: `${FRONTEND_URL}/checkout/resultado`,
-          pending: `${FRONTEND_URL}/checkout/resultado`,
-        },
-        ...(ES_URL_PUBLICA ? { auto_return: "approved" } : {}),
-        external_reference: String(pedido.id),
-        notification_url: process.env.BACKEND_URL
-          ? `${process.env.BACKEND_URL}/api/checkout/webhook`
-          : undefined,
-      },
-    });
-
+    const preferencia = await crearPreferenciaParaPedido(pedido);
     await prisma.carritoItem.deleteMany({ where: { usuarioId: req.usuario.id } });
-
     res.status(201).json({ pedidoId: pedido.id, initPoint: preferencia.init_point });
   } catch (err) {
     await prisma.pedidoItem.deleteMany({ where: { pedidoId: pedido.id } });
     await prisma.pedido.delete({ where: { id: pedido.id } });
+    throw err;
+  }
+}
+
+// Genera una preferencia nueva a partir de un pedido que quedó sin pagar
+// (PENDIENTE o CANCELADO), por ejemplo cuando el usuario cerró la pestaña de
+// Mercado Pago sin completar el pago. No reutiliza el pedido viejo (Mercado
+// Pago no deja reabrir una preferencia ya creada): crea uno nuevo con los
+// mismos productos y precios actuales, y cancela el anterior para no dejar
+// dos pedidos pendientes por la misma compra.
+async function reintentarPedido(req, res) {
+  const pedidoId = Number(req.params.id);
+
+  const pedidoOriginal = await prisma.pedido.findUnique({
+    where: { id: pedidoId },
+    include: { items: { include: { producto: true } } },
+  });
+
+  if (!pedidoOriginal || pedidoOriginal.usuarioId !== req.usuario.id) {
+    return res.status(404).json({ error: "Pedido no encontrado" });
+  }
+
+  if (pedidoOriginal.estado === "PAGADO" || pedidoOriginal.estado === "ENVIADO") {
+    return res.status(400).json({ error: "Este pedido ya fue pagado" });
+  }
+
+  const itemsFuente = pedidoOriginal.items.map((item) => ({
+    productoId: item.productoId,
+    cantidad: item.cantidad,
+    producto: item.producto,
+  }));
+
+  const errorStock = validarStock(itemsFuente);
+  if (errorStock) return res.status(400).json({ error: errorStock });
+
+  const pedidoNuevo = await crearPedidoConItems(req.usuario.id, itemsFuente);
+
+  try {
+    const preferencia = await crearPreferenciaParaPedido(pedidoNuevo);
+    await prisma.pedido.update({ where: { id: pedidoOriginal.id }, data: { estado: "CANCELADO" } });
+    res.status(201).json({ pedidoId: pedidoNuevo.id, initPoint: preferencia.init_point });
+  } catch (err) {
+    await prisma.pedidoItem.deleteMany({ where: { pedidoId: pedidoNuevo.id } });
+    await prisma.pedido.delete({ where: { id: pedidoNuevo.id } });
     throw err;
   }
 }
@@ -130,4 +183,4 @@ async function confirmar(req, res) {
   res.json({ pedidoId: pedido.id, estado: pedido.estado });
 }
 
-module.exports = { crearPreferencia, webhook, confirmar };
+module.exports = { crearPreferencia, reintentarPedido, webhook, confirmar };
