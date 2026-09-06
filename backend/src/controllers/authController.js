@@ -8,6 +8,17 @@ const { resend } = require("../lib/resend");
 const RONDAS_HASH = 10;
 const RESET_EXPIRA_MINUTOS = 60;
 
+// Emails que se registran directamente como ADMIN (lista en variable de
+// entorno, no hardcodeada, para no commitear emails reales al repo).
+const EMAILS_ADMIN = (process.env.ADMIN_EMAILS || "")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
+function esEmailAdmin(email) {
+  return EMAILS_ADMIN.includes(email.toLowerCase());
+}
+
 function generarToken(usuario) {
   return jwt.sign({ id: usuario.id, rol: usuario.rol }, process.env.JWT_SECRET, {
     expiresIn: "7d",
@@ -47,6 +58,7 @@ async function registro(req, res) {
       email,
       contrasena: contrasenaHasheada,
       fechaNacimiento: new Date(fechaNacimiento),
+      rol: esEmailAdmin(email) ? "ADMIN" : "CLIENTE",
     },
   });
 
