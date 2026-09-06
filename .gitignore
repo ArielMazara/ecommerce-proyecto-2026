@@ -10,8 +10,8 @@ node_modules/
 frontend/.next/
 frontend/out/
 
-# Prisma
-prisma/generated/
+# Prisma (cliente generado, no se commitea)
+backend/generated/
 
 # Logs
 npm-debug.log*
