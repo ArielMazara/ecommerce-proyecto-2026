@@ -9,20 +9,7 @@ import { obtenerPedido } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { ESTADOS_PEDIDO } from "@/lib/estados-pedido";
 
-type PedidoDetalle = {
-  id: number;
-  fecha: string;
-  estado: keyof typeof ESTADOS_PEDIDO;
-  total: string;
-  items: {
-    id: number;
-    cantidad: number;
-    precioUnitario: string;
-    producto: { id: number; nombre: string; bodega: string; imagenUrl: string | null };
-  }[];
-};
-
-function formatearPrecio(precio: number) {
+function formatearPrecio(precio) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
@@ -30,17 +17,17 @@ function formatearPrecio(precio: number) {
   }).format(precio);
 }
 
-function formatearFecha(fecha: string) {
+function formatearFecha(fecha) {
   return new Intl.DateTimeFormat("es-AR", { dateStyle: "long", timeStyle: "short" }).format(
     new Date(fecha)
   );
 }
 
 export default function DetallePedidoPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const { usuario, token, cargando: cargandoAuth } = useAuth();
   const router = useRouter();
-  const [pedido, setPedido] = useState<PedidoDetalle | null>(null);
+  const [pedido, setPedido] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {

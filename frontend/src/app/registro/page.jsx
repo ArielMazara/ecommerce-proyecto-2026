@@ -15,11 +15,11 @@ export default function RegistroPage() {
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
 
-  function actualizar(campo: keyof typeof datos, valor: string) {
+  function actualizar(campo, valor) {
     setDatos((prev) => ({ ...prev, [campo]: valor }));
   }
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e) {
     e.preventDefault();
     setError("");
     setEnviando(true);

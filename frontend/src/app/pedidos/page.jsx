@@ -8,15 +8,7 @@ import { obtenerPedidos } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { ESTADOS_PEDIDO } from "@/lib/estados-pedido";
 
-type Pedido = {
-  id: number;
-  fecha: string;
-  estado: keyof typeof ESTADOS_PEDIDO;
-  total: string;
-  items: { id: number; cantidad: number }[];
-};
-
-function formatearPrecio(precio: number) {
+function formatearPrecio(precio) {
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
@@ -24,14 +16,14 @@ function formatearPrecio(precio: number) {
   }).format(precio);
 }
 
-function formatearFecha(fecha: string) {
+function formatearFecha(fecha) {
   return new Intl.DateTimeFormat("es-AR", { dateStyle: "long" }).format(new Date(fecha));
 }
 
 export default function PedidosPage() {
   const { usuario, token, cargando: cargandoAuth } = useAuth();
   const router = useRouter();
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [pedidos, setPedidos] = useState([]);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {

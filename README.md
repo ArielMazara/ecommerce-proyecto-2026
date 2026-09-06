@@ -4,7 +4,7 @@ E-commerce de vinos de bodegas boutique del Valle de Uco, Mendoza. Proyecto inte
 
 ## Stack
 
-- **Frontend**: Next.js 15 (App Router) + TypeScript + Tailwind CSS v4
+- **Frontend**: Next.js 15 (App Router) + JavaScript + Tailwind CSS v4
 - **Componentes UI**: [cult-ui](https://cult-ui.com) (`TextureCard` en las tarjetas de producto) + [shadcn/ui](https://ui.shadcn.com) para el resto (botones, inputs, selects, badges)
 - **Backend**: Node.js + Express (JavaScript), API REST
 - **Base de datos**: PostgreSQL
@@ -98,6 +98,7 @@ La integración usa Checkout Pro: el backend crea una "preferencia" y redirige a
 ## Decisiones y notas técnicas
 
 - **Node 18**: el entorno de desarrollo corre Node 18.19.1, mientras que las últimas versiones de varias herramientas (Next.js 16, Prisma 7, la CLI de shadcn) ya requieren Node 20+. Se pinearon versiones compatibles: **Next.js 15**, **Prisma 6**, **shadcn CLI 3.8.5**.
+- **JavaScript en el frontend**: el proyecto arrancó con TypeScript pero se migró íntegramente a JavaScript plano (`.js`/`.jsx`, sin `tsconfig.json` ni paquetes `@types/*`) para mantener consistencia con el backend, que ya está en JavaScript. El alias `@/*` se resuelve vía `jsconfig.json` en vez de `tsconfig.json`.
 - **cult-ui**: su CLI (`npx shadcn add @cult-ui/...`) queda detrás de un checkpoint anti-bot de Vercel que bloquea clientes no-browser (curl, npx) con 429. El componente `TextureCard` se instaló copiando su código fuente directamente desde el navegador — la vía "Manual Installation" que cult-ui documenta oficialmente como alternativa.
 - **Precios en `Decimal`**: se usa el tipo `Decimal` de Prisma (no `Float`) para evitar errores de redondeo con dinero.
 - **Compensación en el checkout**: si la creación de la preferencia en Mercado Pago falla, el pedido recién creado se elimina en vez de dejar al usuario con un pedido fantasma y el carrito ya vaciado.

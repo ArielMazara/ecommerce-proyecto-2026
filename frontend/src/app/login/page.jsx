@@ -16,7 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e) {
     e.preventDefault();
     setError("");
     setEnviando(true);

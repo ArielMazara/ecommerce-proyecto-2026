@@ -6,7 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { agregarAlCarrito } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 
-export function AgregarCarritoButton({ productoId, stock }: { productoId: number; stock: number }) {
+export function AgregarCarritoButton({ productoId, stock }) {
   const { usuario, token } = useAuth();
   const [mensaje, setMensaje] = useState("");
   const [enviando, setEnviando] = useState(false);

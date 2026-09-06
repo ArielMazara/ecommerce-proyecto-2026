@@ -1,14 +1,6 @@
 import Image from "next/image";
 
-export function AuthLayout({
-  eyebrow,
-  tagline,
-  children,
-}: {
-  eyebrow: string;
-  tagline: string;
-  children: React.ReactNode;
-}) {
+export function AuthLayout({ eyebrow, tagline, children }) {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="relative hidden lg:block">
