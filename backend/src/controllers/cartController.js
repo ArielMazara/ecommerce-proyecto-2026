@@ -1,4 +1,5 @@
 const prisma = require("../lib/prisma");
+const { calcularCostoEnvio } = require("../lib/envio");
 
 function calcularTotal(items) {
   return items.reduce((acc, item) => acc + item.cantidad * Number(item.producto.precio), 0);
@@ -11,7 +12,10 @@ async function listar(req, res) {
     orderBy: { createdAt: "asc" },
   });
 
-  res.json({ items, total: calcularTotal(items) });
+  const total = calcularTotal(items);
+  const costoEnvio = items.length > 0 ? calcularCostoEnvio(total) : 0;
+
+  res.json({ items, total, costoEnvio, totalConEnvio: total + costoEnvio });
 }
 
 async function agregar(req, res) {

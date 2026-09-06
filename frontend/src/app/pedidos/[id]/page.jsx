@@ -121,9 +121,19 @@ export default function DetallePedidoPage() {
           </div>
         ))}
 
-        <div className="flex items-center justify-between pt-6 border-t border-border/60">
-          <span className="text-lg text-foreground">Total</span>
-          <span className="font-serif text-2xl text-gold">{formatearPrecio(Number(pedido.total))}</span>
+        <div className="space-y-2 pt-6 border-t border-border/60">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Subtotal</span>
+            <span>{formatearPrecio(Number(pedido.total) - Number(pedido.costoEnvio))}</span>
+          </div>
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Envío</span>
+            <span>{Number(pedido.costoEnvio) > 0 ? formatearPrecio(Number(pedido.costoEnvio)) : "Gratis"}</span>
+          </div>
+          <div className="flex items-center justify-between pt-2">
+            <span className="text-lg text-foreground">Total</span>
+            <span className="font-serif text-2xl text-gold">{formatearPrecio(Number(pedido.total))}</span>
+          </div>
         </div>
 
         <div className="border-t border-border/60 pt-6">

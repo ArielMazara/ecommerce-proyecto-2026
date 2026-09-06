@@ -29,6 +29,8 @@ export default function CarritoPage() {
   const router = useRouter();
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [costoEnvio, setCostoEnvio] = useState(0);
+  const [totalConEnvio, setTotalConEnvio] = useState(0);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
   const [procesandoPago, setProcesandoPago] = useState(false);
@@ -51,6 +53,8 @@ export default function CarritoPage() {
       .then((data) => {
         setItems(data.items);
         setTotal(data.total);
+        setCostoEnvio(data.costoEnvio);
+        setTotalConEnvio(data.totalConEnvio);
       })
       .finally(() => setCargando(false));
   }
@@ -193,9 +197,19 @@ export default function CarritoPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-6 border-t border-border/60 max-w-2xl">
-            <span className="text-lg text-foreground">Total</span>
-            <span className="font-serif text-2xl text-gold">{formatearPrecio(total)}</span>
+          <div className="space-y-2 pt-6 border-t border-border/60 max-w-2xl">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>Subtotal</span>
+              <span>{formatearPrecio(total)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>Envío</span>
+              <span>{costoEnvio > 0 ? formatearPrecio(costoEnvio) : "Gratis"}</span>
+            </div>
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-lg text-foreground">Total</span>
+              <span className="font-serif text-2xl text-gold">{formatearPrecio(totalConEnvio)}</span>
+            </div>
           </div>
 
           <Button className="w-full max-w-2xl" onClick={irAPagar} disabled={procesandoPago}>
