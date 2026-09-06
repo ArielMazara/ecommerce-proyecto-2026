@@ -93,6 +93,16 @@ La integración usa Checkout Pro: el backend crea una "preferencia" y redirige a
 
 El flujo: `POST /api/auth/solicitar-recuperacion` genera un token aleatorio con expiración de 1 hora y manda el link por mail (responde el mismo mensaje exista o no la cuenta, para no filtrar qué emails están registrados); `POST /api/auth/resetear-contrasena` valida el token y actualiza la contraseña.
 
+## Panel de administración
+
+`/admin` permite crear, editar y borrar productos (incluido el stock). Sólo lo pueden ver usuarios con `rol = ADMIN` — no hay forma de auto-promoverse desde la app (por seguridad), así que para convertir tu propia cuenta en admin hay que hacerlo directo contra la base, por ejemplo con Prisma Studio (`npm run prisma:studio` desde `/backend`, editar el usuario, cambiar `rol` a `ADMIN`) o con SQL:
+
+```sql
+UPDATE usuarios SET rol = 'ADMIN' WHERE email = 'tu-email@ejemplo.com';
+```
+
+Después hay que volver a iniciar sesión para que el nuevo JWT incluya el rol actualizado.
+
 ## Funcionalidades implementadas
 
 1. Setup del proyecto (Next.js, Express, Prisma, Postgres)
@@ -104,6 +114,7 @@ El flujo: `POST /api/auth/solicitar-recuperacion` genera un token aleatorio con 
 7. Checkout con Mercado Pago (Checkout Pro, sandbox)
 8. Panel de usuario con historial de pedidos
 9. Recuperación de contraseña por email (Resend)
+10. Panel de administración para crear, editar y borrar productos (stock incluido)
 
 ## Decisiones y notas técnicas
 

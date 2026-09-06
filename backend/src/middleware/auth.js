@@ -16,4 +16,11 @@ function requiereAuth(req, res, next) {
   }
 }
 
-module.exports = { requiereAuth };
+function requiereAdmin(req, res, next) {
+  if (req.usuario?.rol !== "ADMIN") {
+    return res.status(403).json({ error: "No tenés permisos de administrador" });
+  }
+  next();
+}
+
+module.exports = { requiereAuth, requiereAdmin };

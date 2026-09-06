@@ -19,6 +19,35 @@ export async function obtenerProducto(id) {
   return res.json();
 }
 
+export async function crearProducto(token, datos) {
+  const res = await fetch(`${API_URL}/productos`, {
+    method: "POST",
+    headers: headersAuth(token),
+    body: JSON.stringify(datos),
+  });
+  return procesarRespuesta(res);
+}
+
+export async function actualizarProducto(token, id, datos) {
+  const res = await fetch(`${API_URL}/productos/${id}`, {
+    method: "PUT",
+    headers: headersAuth(token),
+    body: JSON.stringify(datos),
+  });
+  return procesarRespuesta(res);
+}
+
+export async function eliminarProducto(token, id) {
+  const res = await fetch(`${API_URL}/productos/${id}`, {
+    method: "DELETE",
+    headers: headersAuth(token),
+  });
+  if (!res.ok) {
+    const datos = await res.json().catch(() => ({}));
+    throw new Error(datos.error || "No se pudo eliminar el producto");
+  }
+}
+
 async function procesarRespuesta(res) {
   const datos = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(datos.error || "Ocurrió un error");
