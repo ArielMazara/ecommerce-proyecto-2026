@@ -46,6 +46,11 @@ export function Header() {
             <Link href="/pedidos" className="text-muted-foreground hover:text-gold transition-colors">
               Mis pedidos
             </Link>
+            {usuario.rol === "ADMIN" && (
+              <Link href="/admin" className="text-muted-foreground hover:text-gold transition-colors">
+                Admin
+              </Link>
+            )}
             <span className="hidden sm:inline text-muted-foreground">
               Hola, {usuario.nombre.split(" ")[0]}
             </span>
